@@ -109,10 +109,48 @@ class PercentageSwitchView: UIView {
     }
     
     private func setup() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(sliderTapGestureRecognized(_ :)))
+        self.percentageSwitchControl.gestureRecognizers = [tapGesture]
         self.percentageSwitchControl.addTarget(self, action: #selector(segmentSwitchValueChanged(_:)), for: .valueChanged)
         self.backgroundColor = self.bgColor
     }
-    
+
+    @objc private func sliderTapGestureRecognized(_ recognizer: UIGestureRecognizer) {
+        handleSliderGestureRecognizer(recognizer)
+        switch recognizer.state {
+        case .ended:
+            self.percentageSwitchControl.thumbFinalState()
+        default:
+            break
+        }
+    }
+
+    private func handleSliderGestureRecognizer(_ recognizer: UIGestureRecognizer) {
+        if let recognizerView = recognizer.view, recognizerView.isKind(of: PercentageSwichControl.self) {
+            if let segmentSwitch = recognizer.view as? PercentageSwichControl {
+                let point = recognizer.location(in: recognizerView)
+                let width = segmentSwitch.frame.width
+                let percentage = point.x / width
+                self.percentageSwitchControl.currentValue = percentage
+                
+                switch percentage {
+                case 0..<0.125:
+                    currentSegmentState = .Zero
+                case 0.125..<0.375:
+                    currentSegmentState = .OneFourth
+                case 0.375..<0.625:
+                    currentSegmentState = .Half
+                case 0.626...0.875:
+                    currentSegmentState = .ThreeForth
+                case 0.876...1.0:
+                    currentSegmentState = .Full
+                default:
+                    currentSegmentState = .Zero
+                }
+            }
+        }
+    }
+
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         

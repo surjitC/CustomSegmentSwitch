@@ -45,7 +45,7 @@ class PercentageSwichControl: UIControl {
     
     private var minimumValue: CGFloat = 0.0
     private var maximumValue: CGFloat = 1.0
-    private var currentValue: CGFloat = 0.5
+    public var currentValue: CGFloat = 0.5
     
     private var trackHeight: CGFloat = 10.0
     
@@ -286,7 +286,7 @@ class PercentageSwichControl: UIControl {
         }
     }
     
-    private func thumbFinalState() {
+    public func thumbFinalState() {
         let currentSelectedState = getCurrentStateFrom(value: currentValue)
         changeState(currentSelectedState)
     }
