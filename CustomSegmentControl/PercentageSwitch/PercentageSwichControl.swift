@@ -275,14 +275,12 @@ class PercentageSwichControl: UIControl {
             
             self.thumbButton.frame = CGRect(origin: self.thumbOriginForValue(self.currentValue), size: self.thumbsize)
             
-            
             if currentSelectedState != self.selectedState {
                 self.selectedState = currentSelectedState
                 self.setLabelColor()
-                self.trackLayer.setNeedsDisplay()
                 self.sendActions(for: .valueChanged)
             }
-            
+            self.trackLayer.setNeedsDisplay()
         }
     }
     
@@ -399,12 +397,20 @@ class SegmentProgressBarControlTrackLayer: CALayer {
     
     override func draw(in ctx: CGContext) {
         guard let segmentSwitchControl = percentageSwitchControl else { return }
-        let path = UIBezierPath(roundedRect: bounds, cornerRadius: 0.0)
-        ctx.addPath(path.cgPath)
+        
         self.borderWidth = 1.0
         self.borderColor = segmentSwitchControl.bgColor.cgColor
-//        self.cornerRadius = bounds.height / 2
-        ctx.setFillColor(segmentSwitchControl.color.cgColor)
+        
+        let path = UIBezierPath(roundedRect: bounds, cornerRadius: 0.0)
+        ctx.addPath(path.cgPath)
+        ctx.setFillColor(UIColor.gray.cgColor)
         ctx.fillPath()
+        
+        let lowerbound = segmentSwitchControl.positionForValue(0.0)
+        let upperbound = segmentSwitchControl.positionForValue(segmentSwitchControl.currentValue)
+        
+        let colorRect = CGRect(x: bounds.minX, y: bounds.minY, width: upperbound - lowerbound, height: bounds.height)
+        ctx.setFillColor(segmentSwitchControl.color.cgColor)
+        ctx.fill(colorRect)
     }
 }
