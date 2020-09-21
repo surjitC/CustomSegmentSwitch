@@ -41,7 +41,7 @@ class SegmentSwitchControl: UIControl {
     
     private var minimumValue: CGFloat = 0.25
     private var maximumValue: CGFloat = 0.75
-    private var currentValue: CGFloat = 0.25
+    public var currentValue: CGFloat = 0.25
     
     private var trackHeight: CGFloat = 36.0
     
@@ -214,7 +214,7 @@ class SegmentSwitchControl: UIControl {
         }
     }
     
-    private func thumbFinalState() {
+    public func thumbFinalState() {
         if !isContinous {
             currentValue = currentValue < 0.5 ? minimumValue : maximumValue
         }

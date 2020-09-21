@@ -102,10 +102,33 @@ class SegmentSwitchView: UIView {
     }
     
     private func setup() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(sliderTapGestureRecognized(_ :)))
+        self.segmentSwitchControl.gestureRecognizers = [tapGesture]
         self.segmentSwitchControl.addTarget(self, action: #selector(segmentSwitchValueChanged(_:)), for: .valueChanged)
         self.backgroundColor = self.bgColor
     }
-    
+
+    @objc private func sliderTapGestureRecognized(_ recognizer: UIGestureRecognizer) {
+        handleSliderGestureRecognizer(recognizer)
+        switch recognizer.state {
+        case .ended:
+            self.segmentSwitchControl.thumbFinalState()
+        default:
+            break
+        }
+    }
+
+    private func handleSliderGestureRecognizer(_ recognizer: UIGestureRecognizer) {
+        if let recognizerView = recognizer.view, recognizerView.isKind(of: SegmentSwitchControl.self) {
+            if let segmentSwitch = recognizer.view as? SegmentSwitchControl {
+                let point = recognizer.location(in: recognizerView)
+                let width = segmentSwitch.frame.width
+                let percentage = point.x / width
+                self.segmentSwitchControl.currentValue = percentage < 0.5 ? 0.25 : 0.75
+                currentSegmentState = percentage < 0.5 ? .Open : .Close
+            }
+        }
+    }
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
